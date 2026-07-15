@@ -1,0 +1,4 @@
+# Native binary is downloaded on first run (ensureBinary); no need to commit it.
+plugin/bin/
+# Runtime deps are installed by the release workflow / make install.
+node_modules/

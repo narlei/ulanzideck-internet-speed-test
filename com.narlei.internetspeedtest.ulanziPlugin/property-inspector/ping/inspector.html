@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover" />
+  <title>Ping settings</title>
+  <link rel="stylesheet" href="../../libs/css/uspi.css">
+</head>
+<body>
+  <div class="uspi-wrapper hidden">
+    <form id="property-inspector">
+
+      <div class="uspi-item">
+        <div class="uspi-item-label">Gauge max (ms)</div>
+        <input class="uspi-item-value" type="number" name="maxMs" min="10" step="10" placeholder="e.g. 200 (full scale)">
+      </div>
+
+      <div class="uspi-item">
+        <div class="uspi-item-label">Auto-run</div>
+        <select class="uspi-item-value select" name="interval">
+          <option value="0">Off</option>
+          <option value="5">Every 5 min</option>
+          <option value="15">Every 15 min</option>
+          <option value="30">Every 30 min</option>
+          <option value="60">Every 60 min</option>
+        </select>
+      </div>
+
+    </form>
+  </div>
+
+  <script src="../../libs/js/constants.js"></script>
+  <script src="../../libs/js/eventEmitter.js"></script>
+  <script src="../../libs/js/timers.js"></script>
+  <script src="../../libs/js/utils.js"></script>
+  <script src="../../libs/js/ulanziApi.js"></script>
+  <script src="./inspector.js"></script>
+</body>
+</html>

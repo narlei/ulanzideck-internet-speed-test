@@ -2,39 +2,65 @@
   "Name": "Internet Speed Test",
   "Version": "1.0.0",
   "Author": "Narlei Moreira",
-  "Description": "Test your internet connection speed.",
-  "Category": "tools",
-  "Icon": "icon",
+  "Description": "Beautiful neon internet speed test right on your keys.",
+  "Icon": "assets/icons/pluginIcon.png",
+  "Category": "Internet Speed Test",
+  "CategoryIcon": "assets/icons/category.png",
+  "CodePath": "plugin/app.js",
+  "Type": "JavaScript",
+  "PrivateAPI": true,
+  "SupportedInMultiActions": false,
+  "UUID": "com.narlei.internetspeedtest",
   "URL": "https://github.com/narlei/ulanzideck-internet-speed-test",
   "Actions": [
     {
-      "Name": "Internet Speed Test Action",
-      "UUID": "com.narlei.internetspeedtest.action",
-      "Icon": "icon",
+      "Name": "Speed Test",
+      "Icon": "assets/icons/speedtest.png",
+      "PropertyInspectorPath": "property-inspector/speedtest/inspector.html",
+      "state": 0,
+      "States": [
+        {
+          "Name": "Speed Test",
+          "Image": "assets/icons/speedtest.png"
+        }
+      ],
+      "Tooltip": "Measure download and upload speed",
+      "UUID": "com.narlei.internetspeedtest.speedtest",
       "Controllers": [
         "Keypad"
       ],
-      "PropertyInspectorPath": "pi/index.html",
+      "SupportedInMultiActions": false
+    },
+    {
+      "Name": "Ping",
+      "Icon": "assets/icons/ping.png",
+      "PropertyInspectorPath": "property-inspector/ping/inspector.html",
+      "state": 0,
       "States": [
         {
-          "Image": "icon"
+          "Name": "Ping",
+          "Image": "assets/icons/ping.png"
         }
       ],
-      "Tooltip": "Internet Speed Test"
+      "Tooltip": "Measure network latency",
+      "UUID": "com.narlei.internetspeedtest.ping",
+      "Controllers": [
+        "Keypad"
+      ],
+      "SupportedInMultiActions": false
     }
   ],
   "OS": [
     {
       "Platform": "mac",
-      "MinVersion": "10.15"
+      "MinimumVersion": "10.15"
     },
     {
       "Platform": "windows",
-      "MinVersion": "10"
+      "MinimumVersion": "10"
     }
   ],
   "Software": {
-    "MinVersion": "1.0.0"
-  },
-  "CodePath": "app.js"
+    "MinVersion": "2.1.4"
+  }
 }

@@ -1,0 +1,11 @@
+{
+  "name": "ulanzideck-internet-speed-test",
+  "version": "1.0.0",
+  "description": "Internet Speed Test plugin for Ulanzi Deck",
+  "type": "module",
+  "author": "Narlei Moreira",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

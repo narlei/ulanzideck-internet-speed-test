@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover" />
+  <title>Speed Test settings</title>
+  <link rel="stylesheet" href="../../libs/css/uspi.css">
+</head>
+<body>
+  <div class="uspi-wrapper hidden">
+    <form id="property-inspector">
+
+      <div class="uspi-item">
+        <div class="uspi-item-label">Unit</div>
+        <select class="uspi-item-value select" name="unit">
+          <option value="Mbps">Mbps</option>
+          <option value="MBps">MB/s</option>
+        </select>
+      </div>
+
+      <div class="uspi-item">
+        <div class="uspi-item-label">Download plan</div>
+        <input class="uspi-item-value" type="number" name="downMax" min="0" step="1" placeholder="e.g. 400 (Mbps, blank = auto)">
+      </div>
+
+      <div class="uspi-item">
+        <div class="uspi-item-label">Upload plan</div>
+        <input class="uspi-item-value" type="number" name="upMax" min="0" step="1" placeholder="e.g. 400 (Mbps, blank = auto)">
+      </div>
+
+      <div class="uspi-item">
+        <div class="uspi-item-label">Auto-run</div>
+        <select class="uspi-item-value select" name="interval">
+          <option value="0">Off</option>
+          <option value="5">Every 5 min</option>
+          <option value="15">Every 15 min</option>
+          <option value="30">Every 30 min</option>
+          <option value="60">Every 60 min</option>
+        </select>
+      </div>
+
+    </form>
+  </div>
+
+  <script src="../../libs/js/constants.js"></script>
+  <script src="../../libs/js/eventEmitter.js"></script>
+  <script src="../../libs/js/timers.js"></script>
+  <script src="../../libs/js/utils.js"></script>
+  <script src="../../libs/js/ulanziApi.js"></script>
+  <script src="./inspector.js"></script>
+</body>
+</html>

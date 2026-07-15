@@ -45,6 +45,12 @@ jobs:
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Set up Node
+        if: steps.check.outputs.exists == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Build plugin zip(s)
         if: steps.check.outputs.exists == 'false'
         run: |
@@ -52,6 +58,11 @@ jobs:
           for dir in *.ulanziPlugin; do
             [ -d "$dir" ] || continue
             echo "Packaging $dir"
+            # Install runtime deps (e.g. ws) so the packaged plugin can run
+            # standalone from the store — node_modules isn't committed.
+            if [ -f "$dir/package.json" ]; then
+              (cd "$dir" && npm install --omit=dev --no-audit --no-fund)
+            fi
             zip -r "${dir}.zip" "$dir" -x "*.DS_Store"
             found=1
           done

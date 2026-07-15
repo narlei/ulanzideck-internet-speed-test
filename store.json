@@ -1,9 +1,17 @@
 {
   "cover": "resources/cover.png",
   "screenshots": [],
-  "longDescription": "",
+  "longDescription": "Run a beautiful, accurate internet speed test right from your Ulanzi Deck. Press a key to measure download and upload with a real speedtest.net client (speedtest-go) — the same methodology as Ookla — shown on animated concentric neon rings. Add the Ping action for true latency at a glance. Configurable units (Mbps / MB/s), an optional contracted-plan scale so the gauge fills to your plan, and optional auto-run interval.",
   "deviceTypes": [
     "deck"
   ],
-  "tags": []
+  "tags": [
+    "network",
+    "speedtest",
+    "internet",
+    "download",
+    "upload",
+    "ping",
+    "monitor"
+  ]
 }
