@@ -33,13 +33,17 @@ function createInstance(jsn) {
   return new SpeedAction(jsn.context, $UD, new SpeedtestGo(pluginRoot));
 }
 
-// A key was assigned this action.
+// A key was assigned this action (or host reloaded the page).
+// Run immediately on load so the key is useful without a press;
+// press (onRun) re-runs on demand. run() is re-entrant-safe (ignores overlap).
 $UD.onAdd((jsn) => {
   const ctx = jsn.context;
   if (!ACTION_CACHES[ctx]) {
     ACTION_CACHES[ctx] = createInstance(jsn);
-    if (jsn.param) ACTION_CACHES[ctx].setParams(jsn.param);
   }
+  const inst = ACTION_CACHES[ctx];
+  if (jsn.param) inst.setParams(jsn.param);
+  inst.run(jsn);
 });
 
 // Visibility / active state.
@@ -48,11 +52,15 @@ $UD.onSetActive((jsn) => {
   if (inst) inst.setActive(jsn.active);
 });
 
-// Key pressed -> run.
+// Key pressed -> run again.
 $UD.onRun((jsn) => {
   const inst = ACTION_CACHES[jsn.context];
-  if (!inst) $UD.emit("add", jsn);
-  else inst.run(jsn);
+  if (!inst) {
+    // Host sent run before add: create and run once via onAdd path.
+    $UD.emit("add", jsn);
+  } else {
+    inst.run(jsn);
+  }
 });
 
 // Key removed / reassigned -> tear down.

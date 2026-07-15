@@ -44,6 +44,31 @@ function ring(cx, cy, r, width, ratio, stops, id) {
   return track + val;
 }
 
+/**
+ * Indeterminate "comet" on a gauge track: a lit segment of length `len`
+ * (0–1 of the full sweep) whose head sits at `head` (0–1 along the arc).
+ * Clips cleanly at the bottom gap so the comet disappears and reappears.
+ */
+function ringComet(cx, cy, r, width, head, len, stops, id) {
+  const track =
+    '<path d="' + arcPath(cx, cy, r, START, START + SWEEP) + '" fill="none" stroke="' +
+    C_TRACK + '" stroke-width="' + width + '" stroke-linecap="round"/>';
+  const h = ((head % 1) + 1) % 1;
+  const L = Math.min(Math.max(len, 0.05), 0.95);
+  const endDeg = START + SWEEP * h;
+  const startDeg = endDeg - SWEEP * L;
+  if (endDeg <= START + 0.5) return track;
+  const a0 = Math.max(startDeg, START);
+  const a1 = Math.min(endDeg, START + SWEEP);
+  if (a1 - a0 < 0.5) return track;
+  const stroke = stops.length > 1 ? 'url(#' + id + ')' : stops[0];
+  return (
+    track +
+    '<path d="' + arcPath(cx, cy, r, a0, a1) + '" fill="none" stroke="' + stroke +
+    '" stroke-width="' + width + '" stroke-linecap="round" filter="url(#glow)"/>'
+  );
+}
+
 function grad(id, stops) {
   return (
     '<linearGradient id="' + id + '" x1="0%" y1="0%" x2="100%" y2="0%">' +
@@ -199,6 +224,54 @@ function renderStatus(label, sub) {
   return toDataUrl(svgWrap(g));
 }
 
+/**
+ * Dual-gauge indeterminate loading. Outer (down) and inner (up) comets
+ * chase opposite ways on the same tracks used by the final speed readout.
+ *
+ * @param {number} phase 0–1 animation phase (loops)
+ * @param {{mode?: "speed"|"ping"}} [opts]
+ */
+function renderLoading(phase, opts) {
+  const mode = (opts && opts.mode) || "speed";
+  const cx = SIZE / 2, cy = SIZE / 2;
+  const t = ((phase % 1) + 1) % 1;
+  // Ease so the comet lingers a touch mid-arc (feels less mechanical).
+  const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+  let g = "";
+  if (mode === "ping") {
+    // Single ring: cyan→green comet + soft pulse length.
+    const len = 0.22 + 0.12 * Math.sin(t * Math.PI * 2);
+    g += ringComet(cx, cy, 108, 20, ease, len, C_DOWN, "gd");
+    g += text(cx, cy + 8, 36, C_DIM, "···", "bold");
+    g += text(cx, cy + 48, 20, C_DIM, "ping", "600");
+  } else {
+    // Match final speed layout: outer down / inner up, reverse chase.
+    const outerR = 112;
+    const innerR = 90;
+    const stroke = 18;
+    const lenOut = 0.28 + 0.08 * Math.sin(t * Math.PI * 2);
+    const lenIn = 0.28 + 0.08 * Math.sin(t * Math.PI * 2 + Math.PI);
+    g += ringComet(cx, cy, outerR, stroke, ease, lenOut, C_DOWN, "gd");
+    g += ringComet(cx, cy, innerR, stroke, 1 - ease, lenIn, C_UP, "gu");
+
+    // Soft center hint — no ugly "testing" label.
+    g += text(cx, cy - 6, 28, C_DOWN[0], "↓", "bold");
+    g += text(cx, cy + 28, 28, C_UP[0], "↑", "bold");
+    g +=
+      '<text x="' + cx + '" y="' + (cy + 108) +
+      '" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="bold" ' +
+      'text-anchor="middle" dominant-baseline="central">' +
+      '<tspan fill="' + C_DOWN[0] + '">↓ </tspan>' +
+      '<tspan fill="' + C_DIM + '">down</tspan>' +
+      '<tspan fill="' + C_DIM + '">   </tspan>' +
+      '<tspan fill="' + C_UP[0] + '">↑ </tspan>' +
+      '<tspan fill="' + C_DIM + '">up</tspan>' +
+      "</text>";
+  }
+  return toDataUrl(svgWrap(g));
+}
+
 function renderError(label) {
   const cx = SIZE / 2, cy = SIZE / 2;
   let g = ring(cx, cy, 108, 18, 1, [Q_BAD], "");
@@ -207,4 +280,4 @@ function renderError(label) {
   return toDataUrl(svgWrap(g));
 }
 
-export { renderSpeed, renderPing, renderStatus, renderError };
+export { renderSpeed, renderPing, renderStatus, renderLoading, renderError };

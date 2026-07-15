@@ -7,7 +7,7 @@
  * headers are readable). Verified ~6 ms in under a second.
  */
 
-import { renderPing, renderStatus, renderError } from "./gauge.js";
+import { renderPing, renderLoading, renderError } from "./gauge.js";
 
 const CF_DOWN = "https://speed.cloudflare.com/__down";
 
@@ -40,6 +40,7 @@ export default class PingAction {
     this.running = false;
     this.allowSend = true;
     this.autoTimer = null;
+    this.anim = null;
     this.lastIcon = null;
     this.draw(this.pingIcon(0));
   }
@@ -58,24 +59,55 @@ export default class PingAction {
     if (this.running) return;
     this.running = true;
     this.clearAuto();
-    this.draw(renderStatus("ping", "..."));
+
+    let phase = 0;
+    this.draw(renderLoading(phase, { mode: "ping" }));
+    this.anim = setInterval(() => {
+      phase = (phase + 0.06) % 1;
+      this.draw(renderLoading(phase, { mode: "ping" }));
+    }, 80);
 
     try {
       const ms = await measurePing(6);
       this.last = ms;
+      this.stopAnim();
       this.draw(this.pingIcon(ms));
       this.scheduleAuto();
     } catch (e) {
+      this.stopAnim();
       this.draw(renderError("offline"));
     } finally {
       this.running = false;
     }
   }
 
+  stopAnim() {
+    if (this.anim) {
+      clearInterval(this.anim);
+      this.anim = null;
+    }
+  }
+
+  /**
+   * Parse auto-run interval to ms.
+   * New format: "5s", "30s", "1m", "15m", "60m".
+   * Legacy bare numbers (5, 15, 30, 60) are treated as minutes.
+   */
+  intervalMs() {
+    const raw = String(this.config.interval || "0").trim().toLowerCase();
+    if (!raw || raw === "0") return 0;
+    const m = /^(\d+(?:\.\d+)?)(s|m)?$/.exec(raw);
+    if (!m) return 0;
+    const n = Number(m[1]);
+    if (!(n > 0)) return 0;
+    const unit = m[2] || "m"; // bare number = minutes (legacy)
+    return unit === "s" ? n * 1000 : n * 60 * 1000;
+  }
+
   scheduleAuto() {
     this.clearAuto();
-    const min = Number(this.config.interval);
-    if (min > 0) this.autoTimer = setTimeout(() => this.run(), min * 60 * 1000);
+    const ms = this.intervalMs();
+    if (ms > 0) this.autoTimer = setTimeout(() => this.run(), ms);
   }
 
   clearAuto() {
@@ -98,6 +130,7 @@ export default class PingAction {
   }
 
   clear() {
+    this.stopAnim();
     this.clearAuto();
   }
 }

@@ -3,7 +3,7 @@
  * Runs the native speedtest-go binary and renders the concentric neon rings.
  */
 
-import { renderSpeed, renderStatus, renderError } from "./gauge.js";
+import { renderSpeed, renderLoading, renderError } from "./gauge.js";
 
 export default class SpeedAction {
   constructor(context, $UD, speedtestGo) {
@@ -42,12 +42,13 @@ export default class SpeedAction {
     this.running = true;
     this.clearAuto();
 
-    let dots = 0;
-    this.draw(renderStatus("testing", ""));
+    // Dual-gauge comet chase while speedtest-go runs (~15–40s).
+    let phase = 0;
+    this.draw(renderLoading(phase, { mode: "speed" }));
     this.anim = setInterval(() => {
-      dots = (dots + 1) % 4;
-      this.draw(renderStatus("testing", ".".repeat(dots)));
-    }, 800);
+      phase = (phase + 0.04) % 1;
+      this.draw(renderLoading(phase, { mode: "speed" }));
+    }, 80);
 
     try {
       const r = await this.st.run({ threads: 32 });
