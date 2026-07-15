@@ -1,0 +1,40 @@
+{
+  "Name": "Internet Speed Test",
+  "Version": "1.0.0",
+  "Author": "Narlei Moreira",
+  "Description": "Test your internet connection speed.",
+  "Category": "tools",
+  "Icon": "icon",
+  "URL": "https://github.com/narlei/ulanzideck-internet-speed-test",
+  "Actions": [
+    {
+      "Name": "Internet Speed Test Action",
+      "UUID": "com.narlei.internetspeedtest.action",
+      "Icon": "icon",
+      "Controllers": [
+        "Keypad"
+      ],
+      "PropertyInspectorPath": "pi/index.html",
+      "States": [
+        {
+          "Image": "icon"
+        }
+      ],
+      "Tooltip": "Internet Speed Test"
+    }
+  ],
+  "OS": [
+    {
+      "Platform": "mac",
+      "MinVersion": "10.15"
+    },
+    {
+      "Platform": "windows",
+      "MinVersion": "10"
+    }
+  ],
+  "Software": {
+    "MinVersion": "1.0.0"
+  },
+  "CodePath": "app.js"
+}
